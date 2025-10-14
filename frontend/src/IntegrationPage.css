@@ -1,0 +1,92 @@
+.integration-page {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background: #f5f5fa;
+}
+
+.integration-content {
+  max-width: 800px;
+  margin: 4rem auto;
+  padding: 2rem;
+  background-color: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+  text-align: center;
+}
+
+.integration-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.integration-logo {
+  height: 60px;
+  width: 60px;
+  object-fit: contain;
+}
+
+.integration-header h1 {
+  font-size: 2.5rem;
+  color: #123456;
+}
+
+.integration-description {
+  font-size: 1.2rem;
+  color: #555;
+  line-height: 1.6;
+  margin-bottom: 2.5rem;
+}
+
+.automation-examples {
+  text-align: left;
+  margin-bottom: 2.5rem;
+  padding: 1.5rem;
+  background-color: #f9fafb;
+  border-radius: 8px;
+  border-left: 5px solid #1d7a85;
+}
+
+.automation-examples h3 {
+  margin-top: 0;
+  font-size: 1.4rem;
+  color: #123456;
+}
+
+.automation-examples ul {
+  padding-left: 1.5rem;
+  font-size: 1.1rem;
+  line-height: 1.7;
+  color: #333;
+}
+
+.automation-examples ul li {
+  margin-bottom: 0.75rem;
+}
+
+.connect-btn {
+  padding: 1rem 3rem;
+  font-size: 1.2rem;
+}
+
+@media (max-width: 768px) {
+  .integration-content {
+    margin: 2rem 1rem;
+    padding: 1.5rem;
+  }
+
+  .integration-header {
+    flex-direction: column;
+  }
+
+  .integration-header h1 {
+    font-size: 2rem;
+  }
+
+  .integration-description {
+    font-size: 1rem;
+  }
+}
