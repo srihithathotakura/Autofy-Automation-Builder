@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const controller = require("../controllers/requestTemplateController");
+const controller = require("../controllers/RequestTemplateController");
 
 router.post("/", controller.createTemplateRequest);
 router.get("/", controller.getAllTemplateRequests);
