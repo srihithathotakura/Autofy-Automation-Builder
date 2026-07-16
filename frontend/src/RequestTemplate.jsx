@@ -1,6 +1,7 @@
 // Complete updated RequestTemplate.jsx with client-side validations and key constraints
 
 import React, { useState, useEffect } from "react";
+import { apiUrl } from "./config";
 
 const roles = ["Student", "Teacher", "Admin", "Other"];
 const priorities = ["Low", "Medium", "High"];
@@ -132,7 +133,7 @@ export default function RequestTemplate() {
   const handleDelete = async (id) => {
     if (!window.confirm("Are you sure you want to delete this request?")) return;
     try {
-      const res = await fetch(`/api/request-template/${id}`, {
+      const res = await fetch(apiUrl(`/api/request-template/${id}`), {
         method: "DELETE",
       });
       if (res.ok) {

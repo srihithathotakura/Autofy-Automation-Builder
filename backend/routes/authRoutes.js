@@ -8,11 +8,14 @@ const User = require('../models/User');
 
 const JWT_SECRET = process.env.JWT_SECRET || 'secret';
 
+const BACKEND_URL = process.env.BACKEND_URL || 'http://localhost:5000';
+const FRONTEND_URL = (process.env.FRONTEND_URL || 'http://localhost:3000').split(',')[0].trim();
+
 // Passport config
 passport.use(new GoogleStrategy({
     clientID: process.env.GOOGLE_CLIENT_ID,
     clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-    callbackURL: "http://localhost:5000/api/auth/google/callback"
+    callbackURL: `${BACKEND_URL}/api/auth/google/callback`
   },
   async (accessToken, refreshToken, profile, done) => {
     try {
@@ -46,6 +49,36 @@ passport.deserializeUser(async (id, done) => {
   }
 });
 
+// Register
+router.post('/register', async (req, res) => {
+  const { name, email, password, role } = req.body;
+  try {
+    if (!name || !email || !password) {
+      return res.status(400).json({ msg: 'Name, email, and password are required' });
+    }
+
+    const existing = await User.findOne({ email });
+    if (existing) {
+      return res.status(400).json({ msg: 'User already exists' });
+    }
+
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(password, salt);
+
+    const user = new User({
+      name,
+      email,
+      password: hashedPassword,
+      role: role || 'Student'
+    });
+    await user.save();
+
+    res.status(201).json({ msg: 'User registered successfully' });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 // Regular login
 router.post('/login', async (req, res) => {
   const { email, password, role } = req.body;
@@ -68,10 +101,10 @@ router.post('/login', async (req, res) => {
 router.get('/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
 
 router.get('/google/callback',
-  passport.authenticate('google', { failureRedirect: 'http://localhost:3000/login' }),
+  passport.authenticate('google', { failureRedirect: `${FRONTEND_URL}/login` }),
   (req, res) => {
     const token = jwt.sign({ user: { id: req.user.id, role: req.user.role } }, JWT_SECRET, { expiresIn: '7d' });
-    res.redirect(`http://localhost:3000/auth-success?token=${token}&role=${req.user.role}&userId=${req.user.id}&name=${req.user.name}`);
+    res.redirect(`${FRONTEND_URL}/auth-success?token=${token}&role=${req.user.role}&userId=${req.user.id}&name=${req.user.name}`);
   }
 );
 

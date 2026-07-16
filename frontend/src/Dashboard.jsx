@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { apiUrl } from "./config";
 import { Link } from "react-router-dom";
 import { LineChart, Line, BarChart, Bar, PieChart, Pie, Cell, AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
@@ -24,9 +25,9 @@ const Dashboard = () => {
   const fetchData = async () => {
     try {
       const [workflowsRes, statsRes, profileRes] = await Promise.all([
-        fetch(`/api/workflows/user/${userId}`),
-        fetch(`/api/workflows/stats/${userId}`),
-        fetch('/api/profile/me')
+        fetch(apiUrl(`/api/workflows/user/${userId}`)),
+        fetch(apiUrl(`/api/workflows/stats/${userId}`)),
+        fetch(apiUrl('/api/profile/me'))
       ]);
 
       if (workflowsRes.ok) {
@@ -63,7 +64,7 @@ const Dashboard = () => {
   const handleProfileSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await fetch("/api/profile", {
+      const res = await fetch(apiUrl("/api/profile"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(profile),
@@ -81,7 +82,7 @@ const Dashboard = () => {
 
   const handleExecuteWorkflow = async (workflowId) => {
     try {
-      const res = await fetch(`/api/workflows/${workflowId}/execute`, {
+      const res = await fetch(apiUrl(`/api/workflows/${workflowId}/execute`), {
         method: 'POST'
       });
 
@@ -100,7 +101,7 @@ const Dashboard = () => {
 
   const handleToggleWorkflow = async (workflowId) => {
     try {
-      const res = await fetch(`/api/workflows/${workflowId}/toggle`, {
+      const res = await fetch(apiUrl(`/api/workflows/${workflowId}/toggle`), {
         method: 'PUT'
       });
 
@@ -116,7 +117,7 @@ const Dashboard = () => {
     if (!window.confirm('Are you sure you want to delete this workflow?')) return;
 
     try {
-      const res = await fetch(`/api/workflows/${workflowId}`, {
+      const res = await fetch(apiUrl(`/api/workflows/${workflowId}`), {
         method: 'DELETE'
       });
 

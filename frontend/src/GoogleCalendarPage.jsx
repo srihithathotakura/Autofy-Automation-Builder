@@ -1,6 +1,7 @@
 
 // frontend/src/GoogleCalendarPage.jsx - UPDATED
 import React, { useState } from "react";
+import { apiUrl } from "./config";
 import { Link } from "react-router-dom";
 
 const GoogleCalendarPage = () => {
@@ -11,7 +12,7 @@ const GoogleCalendarPage = () => {
     const userId = localStorage.getItem('userId') || 'simulated-user-id';
     
     try {
-      const res = await fetch(`/api/oauth/connect/Google Calendar?userId=${userId}`);
+      const res = await fetch(apiUrl(`/api/oauth/connect/Google Calendar?userId=${userId}`));
       if (res.ok) {
         const data = await res.json();
         const width = 600;

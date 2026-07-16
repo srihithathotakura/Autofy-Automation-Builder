@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { apiUrl } from "./config";
 import { useNavigate } from "react-router-dom";
 import { BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import Navbar from "./components/Navbar";
@@ -60,7 +61,7 @@ const TeacherDashboard = () => {
 
   const fetchStudents = async () => {
     try {
-      const res = await fetch(`/api/students?teacherId=${teacherId}`);
+      const res = await fetch(apiUrl(`/api/students?teacherId=${teacherId}`));
       if (res.ok) {
         const data = await res.json();
         setStudents(data);
@@ -72,7 +73,7 @@ const TeacherDashboard = () => {
 
   const fetchCourses = async () => {
     try {
-      const res = await fetch(`/api/courses?teacherId=${teacherId}`);
+      const res = await fetch(apiUrl(`/api/courses?teacherId=${teacherId}`));
       if (res.ok) {
         const data = await res.json();
         setCourses(data);
@@ -85,7 +86,7 @@ const TeacherDashboard = () => {
   const fetchGrades = async () => {
     try {
       const token = localStorage.getItem('userToken');
-      const res = await fetch(`/api/grades?teacherId=${teacherId}`, {
+      const res = await fetch(apiUrl(`/api/grades?teacherId=${teacherId}`), {
         headers: token ? { 'Authorization': `Bearer ${token}` } : {}
       });
       if (res.ok) {
@@ -100,13 +101,13 @@ const TeacherDashboard = () => {
 
   const fetchWorkflows = async () => {
     try {
-      const res = await fetch(`/api/workflows/user/${teacherId}`);
+      const res = await fetch(apiUrl(`/api/workflows/user/${teacherId}`));
       if (res.ok) {
         const data = await res.json();
         setWorkflows(data);
       }
       
-      const statsRes = await fetch(`/api/workflows/stats/${teacherId}`);
+      const statsRes = await fetch(apiUrl(`/api/workflows/stats/${teacherId}`));
       if (statsRes.ok) {
         const statsData = await statsRes.json();
         setWorkflowStats(statsData);
@@ -124,7 +125,7 @@ const TeacherDashboard = () => {
   const handleStudentSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await fetch('/api/students', {
+      const res = await fetch(apiUrl('/api/students'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ ...studentForm, teacherId })
@@ -148,7 +149,7 @@ const TeacherDashboard = () => {
     if (!window.confirm('Are you sure you want to delete this student?')) return;
     
     try {
-      const res = await fetch(`/api/students/${id}`, { method: 'DELETE' });
+      const res = await fetch(apiUrl(`/api/students/${id}`), { method: 'DELETE' });
       if (res.ok) {
         setMessage('✅ Student deleted successfully');
         await fetchStudents();
@@ -168,7 +169,7 @@ const TeacherDashboard = () => {
     e.preventDefault();
     try {
       const token = localStorage.getItem('userToken');
-      const res = await fetch('/api/courses', {
+      const res = await fetch(apiUrl('/api/courses'), {
         method: 'POST',
         headers: { 
           'Content-Type': 'application/json',
@@ -195,7 +196,7 @@ const TeacherDashboard = () => {
     if (!window.confirm('Are you sure you want to delete this course?')) return;
     
     try {
-      const res = await fetch(`/api/courses/${id}`, { method: 'DELETE' });
+      const res = await fetch(apiUrl(`/api/courses/${id}`), { method: 'DELETE' });
       if (res.ok) {
         setMessage('✅ Course deleted successfully');
         await fetchCourses();
@@ -224,7 +225,7 @@ const handleGradeSubmit = async (e) => {
       return;
     }
     
-    const res = await fetch('/api/grades', {
+    const res = await fetch(apiUrl('/api/grades'), {
       method: 'POST',
       headers: { 
         'Content-Type': 'application/json',
@@ -272,7 +273,7 @@ const handleGradeSubmit = async (e) => {
     if (!window.confirm('Are you sure you want to delete this grade?')) return;
     
     try {
-      const res = await fetch(`/api/grades/${id}`, { method: 'DELETE' });
+      const res = await fetch(apiUrl(`/api/grades/${id}`), { method: 'DELETE' });
       if (res.ok) {
         setMessage('✅ Grade deleted successfully');
         await fetchGrades();

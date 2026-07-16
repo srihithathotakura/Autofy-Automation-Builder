@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { apiUrl } from "./config";
 import { Link, useNavigate } from 'react-router-dom';
 import Navbar from './components/Navbar';
 
@@ -12,7 +13,7 @@ const Login = () => {
   const onChange = (e) => setFormData({ ...formData, [e.target.name]: e.target.value });
 
   const handleGoogleSignIn = () => {
-    window.location.href = '/api/auth/google';
+    window.location.href = apiUrl('/api/auth/google');
   };
 
   const redirectToDashboard = (userRole) => {
@@ -28,7 +29,7 @@ const Login = () => {
   const onSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await fetch('/api/auth/login', {
+      const res = await fetch(apiUrl('/api/auth/login'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password, role }),

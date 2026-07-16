@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { apiUrl } from "./config";
 import { Link } from "react-router-dom";
 import Navbar from "./components/Navbar";
 
@@ -101,7 +102,7 @@ function StepModal({ type, initialData, onSave, onClose, userId }) {
 
   const fetchConnectedAccounts = async () => {
     try {
-      const res = await fetch(`/api/oauth/connected-apps/${userId}`);
+      const res = await fetch(apiUrl(`/api/oauth/connected-apps/${userId}`));
       if (res.ok) {
         const apps = await res.json();
         const filtered = apps.filter(app => app.appName === selectedApp);
@@ -115,7 +116,7 @@ function StepModal({ type, initialData, onSave, onClose, userId }) {
   const handleRealSignIn = async () => {
     try {
       setLoading(true);
-      const res = await fetch(`/api/oauth/connect/${selectedApp}?userId=${userId}`);
+      const res = await fetch(apiUrl(`/api/oauth/connect/${selectedApp}?userId=${userId}`));
       if (res.ok) {
         const data = await res.json();
         // Open OAuth flow in new window
@@ -124,7 +125,7 @@ function StepModal({ type, initialData, onSave, onClose, userId }) {
         // Poll for connection
         const pollInterval = setInterval(async () => {
           await fetchConnectedAccounts();
-          const updatedRes = await fetch(`/api/oauth/connected-apps/${userId}`);
+          const updatedRes = await fetch(apiUrl(`/api/oauth/connected-apps/${userId}`));
           if (updatedRes.ok) {
             const apps = await updatedRes.json();
             const newConnection = apps.find(
@@ -340,7 +341,7 @@ function WorkflowWorkspace() {
     }
     
     try {
-      const response = await fetch('/api/workflows', {
+      const response = await fetch(apiUrl('/api/workflows'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

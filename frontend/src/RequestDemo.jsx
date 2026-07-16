@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { apiUrl } from "./config";
 const roles = ["Student", "Teacher", "Admin", "Other"];
 const demoTypes = ["Intro Demo", "Feature Showcase", "Technical Deep Dive", "Custom Workflow Demo"];
 const initialState = {
@@ -101,7 +102,7 @@ export default function RequestDemo() {
   const handleDelete = async (id) => {
     if (!window.confirm("Are you sure to delete?")) return;
     try {
-      const res = await fetch(`/api/request-demo/${id}`, { method: "DELETE" });
+      const res = await fetch(apiUrl(`/api/request-demo/${id}`), { method: "DELETE" });
       if (res.ok) {
         setMessage("Deleted successfully");
         fetchRequests();

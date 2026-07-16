@@ -4,6 +4,9 @@ const router = express.Router();
 const { google } = require('googleapis');
 const User = require('../models/User');
 
+const BACKEND_URL = process.env.BACKEND_URL || 'http://localhost:5000';
+const FRONTEND_URL = (process.env.FRONTEND_URL || 'http://localhost:3000').split(',')[0].trim();
+
 const SCOPES = {
   'Gmail': [
     'https://www.googleapis.com/auth/gmail.send', 
@@ -41,7 +44,7 @@ router.get('/connect/:app', (req, res) => {
   const oauth2Client = new google.auth.OAuth2(
     process.env.GOOGLE_CLIENT_ID,
     process.env.GOOGLE_CLIENT_SECRET,
-    'http://localhost:5000/api/oauth/callback'
+    `${BACKEND_URL}/api/oauth/callback`
   );
 
   const authUrl = oauth2Client.generateAuthUrl({
@@ -61,7 +64,7 @@ router.get('/callback', async (req, res) => {
   console.log('Callback received:', { hasCode: !!code, state, error });
 
   if (error || !code) {
-    return res.redirect(`http://localhost:3000/integrations/error?reason=${error || 'no_code'}`);
+    return res.redirect(`${FRONTEND_URL}/integrations/error?reason=${error || 'no_code'}`);
   }
 
   try {
@@ -71,7 +74,7 @@ router.get('/callback', async (req, res) => {
     const oauth2Client = new google.auth.OAuth2(
       process.env.GOOGLE_CLIENT_ID,
       process.env.GOOGLE_CLIENT_SECRET,
-      'http://localhost:5000/api/oauth/callback'
+      `${BACKEND_URL}/api/oauth/callback`
     );
 
     // Exchange code for tokens
@@ -97,7 +100,7 @@ router.get('/callback', async (req, res) => {
     const user = await User.findById(userId);
     if (!user) {
       console.error('User not found:', userId);
-      return res.redirect('http://localhost:3000/integrations/error?reason=user_not_found');
+      return res.redirect(`${FRONTEND_URL}/integrations/error?reason=user_not_found`);
     }
 
     // Remove existing connection for this app+email
@@ -119,10 +122,10 @@ router.get('/callback', async (req, res) => {
     await user.save();
     console.log('✓ Connection saved:', app, data.email);
 
-    res.redirect(`http://localhost:3000/integrations/success?app=${encodeURIComponent(app)}&email=${encodeURIComponent(data.email)}`);
+    res.redirect(`${FRONTEND_URL}/integrations/success?app=${encodeURIComponent(app)}&email=${encodeURIComponent(data.email)}`);
   } catch (err) {
     console.error('OAuth callback error:', err.message);
-    res.redirect(`http://localhost:3000/integrations/error?reason=${encodeURIComponent(err.message)}`);
+    res.redirect(`${FRONTEND_URL}/integrations/error?reason=${encodeURIComponent(err.message)}`);
   }
 });
 

@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { apiUrl } from "./config";
 import { Link } from "react-router-dom";
 import "./App.css";
 
@@ -28,7 +29,7 @@ const AssignmentSubmission = () => {
   setMessage("Submitting your assignment...");
   
   try {
-    const response = await fetch("/api/assignment-submission", {
+    const response = await fetch(apiUrl("/api/assignment-submission"), {
       method: "POST",
       body: formData, // Don't set Content-Type for FormData
     });

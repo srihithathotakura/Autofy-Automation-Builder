@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { apiUrl } from "./config";
 import { Link, useNavigate } from 'react-router-dom';
 import Navbar from './components/Navbar';
 
@@ -12,13 +13,13 @@ const Register = () => {
   const onChange = (e) => setFormData({ ...formData, [e.target.name]: e.target.value });
 
   const handleGoogleSignUp = () => {
-    window.location.href = '/api/auth/google';
+    window.location.href = apiUrl('/api/auth/google');
   };
 
   const onSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await fetch('/api/auth/register', {
+      const res = await fetch(apiUrl('/api/auth/register'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name, email, password, role }),

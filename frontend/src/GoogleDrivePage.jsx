@@ -1,5 +1,6 @@
 // frontend/src/GoogleDrivePage.jsx - UPDATED
 import React, { useState } from "react";
+import { apiUrl } from "./config";
 import { Link } from "react-router-dom";
 
 const GoogleDrivePage = () => {
@@ -10,7 +11,7 @@ const GoogleDrivePage = () => {
     const userId = localStorage.getItem('userId') || 'simulated-user-id';
     
     try {
-      const res = await fetch(`/api/oauth/connect/Google Drive?userId=${userId}`);
+      const res = await fetch(apiUrl(`/api/oauth/connect/Google Drive?userId=${userId}`));
       if (res.ok) {
         const data = await res.json();
         // Open OAuth in popup
