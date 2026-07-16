@@ -11,33 +11,41 @@ const JWT_SECRET = process.env.JWT_SECRET || 'secret';
 const BACKEND_URL = process.env.BACKEND_URL || 'http://localhost:5000';
 const FRONTEND_URL = (process.env.FRONTEND_URL || 'http://localhost:3000').split(',')[0].trim();
 
-// Passport config
-passport.use(new GoogleStrategy({
-    clientID: process.env.GOOGLE_CLIENT_ID,
-    clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-    callbackURL: `${BACKEND_URL}/api/auth/google/callback`
-  },
-  async (accessToken, refreshToken, profile, done) => {
-    try {
-      let user = await User.findOne({ email: profile.emails[0].value });
-      if (!user) {
-        user = new User({
-          name: profile.displayName,
-          email: profile.emails[0].value,
-          googleId: profile.id,
-          role: 'Student'
-        });
-        await user.save();
-      } else if (!user.googleId) {
-        user.googleId = profile.id;
-        await user.save();
+// Passport config - only register Google strategy if credentials are actually
+// set. Without this guard, passport-google-oauth20 throws at startup and
+// crashes the ENTIRE server (not just Google login) when these are missing.
+const googleAuthEnabled = !!(process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET);
+
+if (googleAuthEnabled) {
+  passport.use(new GoogleStrategy({
+      clientID: process.env.GOOGLE_CLIENT_ID,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+      callbackURL: `${BACKEND_URL}/api/auth/google/callback`
+    },
+    async (accessToken, refreshToken, profile, done) => {
+      try {
+        let user = await User.findOne({ email: profile.emails[0].value });
+        if (!user) {
+          user = new User({
+            name: profile.displayName,
+            email: profile.emails[0].value,
+            googleId: profile.id,
+            role: 'Student'
+          });
+          await user.save();
+        } else if (!user.googleId) {
+          user.googleId = profile.id;
+          await user.save();
+        }
+        return done(null, user);
+      } catch (err) {
+        return done(err, null);
       }
-      return done(null, user);
-    } catch (err) {
-      return done(err, null);
     }
-  }
-));
+  ));
+} else {
+  console.warn('⚠ GOOGLE_CLIENT_ID/GOOGLE_CLIENT_SECRET not set - Google Sign-In is disabled, everything else still works.');
+}
 
 passport.serializeUser((user, done) => done(null, user.id));
 passport.deserializeUser(async (id, done) => {
@@ -98,10 +106,20 @@ router.post('/login', async (req, res) => {
 });
 
 // Google login routes
-router.get('/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
+router.get('/google', (req, res, next) => {
+  if (!googleAuthEnabled) {
+    return res.status(503).json({ msg: 'Google Sign-In is not configured on this server yet.' });
+  }
+  passport.authenticate('google', { scope: ['profile', 'email'] })(req, res, next);
+});
 
 router.get('/google/callback',
-  passport.authenticate('google', { failureRedirect: `${FRONTEND_URL}/login` }),
+  (req, res, next) => {
+    if (!googleAuthEnabled) {
+      return res.redirect(`${FRONTEND_URL}/login`);
+    }
+    passport.authenticate('google', { failureRedirect: `${FRONTEND_URL}/login` })(req, res, next);
+  },
   (req, res) => {
     const token = jwt.sign({ user: { id: req.user.id, role: req.user.role } }, JWT_SECRET, { expiresIn: '7d' });
     res.redirect(`${FRONTEND_URL}/auth-success?token=${token}&role=${req.user.role}&userId=${req.user.id}&name=${req.user.name}`);
