@@ -1,6 +1,5 @@
 # 🎓 Autofy - No-Code Automation Platform for Education
 
-![Autofy Banner](public/hero-img.png)
 
 **Autofy** is a comprehensive no-code automation platform designed specifically for educational institutions. It enables students, teachers, and administrators to streamline repetitive academic tasks through smart AI-powered workflows with secure integrations and an intuitive drag-and-drop builder.
 
@@ -8,6 +7,15 @@
 [![Node.js Version](https://img.shields.io/badge/node-%3E%3D14.0.0-brightgreen)](https://nodejs.org/)
 [![React Version](https://img.shields.io/badge/react-18.2.0-blue)](https://reactjs.org/)
 [![MongoDB](https://img.shields.io/badge/MongoDB-4.4%2B-green)](https://www.mongodb.com/)
+
+---
+
+## 🚀 Live Demo
+
+- **App:** [autofy-automation-builder-nine.vercel.app](https://autofy-automation-builder-nine.vercel.app)
+- **Backend API:** [autofy-backend-rdwq.onrender.com](https://autofy-backend-rdwq.onrender.com)
+
+> ⏳ **Note:** The backend is hosted on Render's free tier, which spins down after periods of inactivity. The first request after idle time can take 30–50 seconds to wake the server — please be patient on first load, especially before signing in with Google.
 
 ---
 
@@ -231,8 +239,8 @@ Before you begin, ensure you have the following installed:
 ### Step 1: Clone the Repository
 
 ```bash
-git clone https://github.com/yourusername/autofy.git
-cd autofy
+git clone https://github.com/srihithathotakura/Autofy-Automation-Builder.git
+cd Autofy-Automation-Builder
 ```
 
 ### Step 2: Backend Setup
@@ -303,11 +311,18 @@ Navigate to **APIs & Services > Library** and enable:
 5. **Authorized JavaScript origins:**
    ```
    http://localhost:3000
+   https://your-frontend.vercel.app
    ```
 6. **Authorized redirect URIs:**
+
+   This app has two separate OAuth flows — Google Sign-In (login) and per-integration Connect (Gmail/Drive/Calendar/Sheets) — so both callback routes must be registered:
    ```
+   http://localhost:5000/api/auth/google/callback
    http://localhost:5000/api/oauth/callback
+   https://your-backend.onrender.com/api/auth/google/callback
+   https://your-backend.onrender.com/api/oauth/callback
    ```
+   Replace `your-frontend.vercel.app` and `your-backend.onrender.com` with your actual deployed URLs. Each redirect URI must match **exactly** (protocol, domain, and path) or Google will return a `redirect_uri_mismatch` error.
 7. Click **Create**
 8. **Copy Client ID and Client Secret** (you'll need these!)
 
@@ -823,7 +838,7 @@ Workflows consist of:
 **Solutions:**
 
 1. Verify `.env` file has correct `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET`
-2. Check redirect URI is exactly: `http://localhost:5000/api/oauth/callback`
+2. Check redirect URIs match exactly what's registered in Google Cloud Console (both `/api/auth/google/callback` and `/api/oauth/callback`, for local and production)
 3. Ensure your email is added to test users in Google Cloud Console
 4. Enable all required Google APIs
 5. Clear browser cache and cookies
@@ -969,14 +984,12 @@ console.log("API Base:", process.env.REACT_APP_API_BASE);
 
 ---
 
-## 📊 Project Statistics
+## 📊 Project Snapshot
 
-- **Lines of Code:** ~15,000+
-- **API Endpoints:** 50+
-- **Database Collections:** 12
-- **Supported Integrations:** 12
-- **Active Users:** Growing daily
-- **Workflow Templates:** 20+
+- **Database Collections:** 12 (Users, Workflows, Students, Courses, Assignments, Grades, and more)
+- **Working Integrations:** 4 live (Gmail, Google Drive, Google Calendar, Google Sheets)
+- **Planned Integrations:** Slack, Notion, Outlook, Dropbox, Trello (see [Roadmap](#️-roadmap))
+- **User Roles:** 3 (Student, Teacher, Administrator), each with a dedicated dashboard
 
 ---
 
@@ -984,7 +997,7 @@ console.log("API Base:", process.env.REACT_APP_API_BASE);
 
 ### Reporting Security Issues
 
-If you discover a security vulnerability, please email security@autofy.edu instead of using the issue tracker.
+If you discover a security vulnerability, please open a [private security advisory](https://github.com/srihithathotakura/Autofy-Automation-Builder/security/advisories/new) on GitHub instead of a public issue.
 
 ### Security Measures
 
@@ -1022,6 +1035,6 @@ If you discover a security vulnerability, please email security@autofy.edu inste
 
 **Made for Education**
 
-[Website](https://autofy.edu) • [Documentation](https://docs.autofy.edu) • [Blog](https://blog.autofy.edu)
+[Live Demo](https://autofy-automation-builder-nine.vercel.app) • [Repository](https://github.com/srihithathotakura/Autofy-Automation-Builder) • [Report a Bug](https://github.com/srihithathotakura/Autofy-Automation-Builder/issues)
 
 </div>
